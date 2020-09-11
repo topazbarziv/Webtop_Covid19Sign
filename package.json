@@ -1,0 +1,26 @@
+{
+  "name": "webtop_covid19sign",
+  "version": "1.0.0",
+  "description": "Automatically signing Covid-19 digital health statement at www.webtop.co.il",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/topazbarziv/Webtop_Covid19Sign.git"
+  },
+  "author": "Topaz Barziv",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/topazbarziv/Webtop_Covid19Sign/issues"
+  },
+  "homepage": "https://github.com/topazbarziv/Webtop_Covid19Sign#readme",
+  "dependencies": {
+    "cli-spinner": "^0.2.10",
+    "moment-timezone": "^0.5.31",
+    "node-telegram-bot-api": "^0.50.0",
+    "path": "^0.12.7",
+    "puppeteer-core": "^5.2.1"
+  }
+}

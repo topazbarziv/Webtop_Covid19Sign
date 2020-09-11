@@ -102,3 +102,17 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Chromium Session
+ChromeSession/
+
+# Chromium Application
+win-*/
+mac-*/
+linux-*/
+
+# Last screenshot
+screenshot.png
+
+# Config file
+src/config.js
