@@ -7,16 +7,16 @@
 //
 
 const TelegramBot = require('node-telegram-bot-api')
-const Spinner = require('cli-spinner').Spinner
+const { Spinner } = require('cli-spinner')
 const puppeteer = require('puppeteer-core')
 const moment = require('moment-timezone')
 const path = require('path')
 
 const config = require('./config')
-
+var bot = null
 
 async function main() {
-	let bot = new TelegramBot(config.telegram.apiKey, {polling: true})
+	bot = new TelegramBot(config.telegram.apiKey, {polling: true})
 
 	if(config.messages.autoRemind) {
 		setInterval(() => {
@@ -28,8 +28,15 @@ async function main() {
 
 	bot.onText(/\/sign/, async(msg, match) => {
 		if(!config.messages || msg.chat.id == config.messages.chatId){
-			await sign()
-			bot.sendPhoto(msg.chat.id, path.join(process.cwd(), "screenshot.png"))
+			try {
+				let result = await sign()
+
+				if(result) {
+					bot.sendPhoto(msg.chat.id, path.join(process.cwd(), "screenshot.png"))
+				}
+			} catch(e) {
+				bot.sendMessage(msg.chat.id, "Because an error, the signing operation was did not succeed. Check the console.")
+			}
 		} else {
 			bot.sendMessage(msg.chat.id, `You have to set this ${msg.chat.id} chat id to src/config.js. \nDon't forget to reload the app after you changed the configuration file.`)
 		}
@@ -75,6 +82,9 @@ async function sign() {
 			console.log(message)
 		})
 
+		// Wait until page is loading
+		await page.waitForSelector("#identityNumber", { timeout: 5000 })
+
 		// Enter smartschool - username
 		await page.focus('#identityNumber')
 		await page.keyboard.type(config.smartschool.username)
@@ -88,13 +98,39 @@ async function sign() {
 		await page.keyboard.press('Enter')
 
 		// Wait until user connected
-		await sleep(500)
+		try {
+			await page.waitForSelector("#loginDetails", { timeout: 5000 })
+		} catch(e) {
+			console.error("Looks like your username or password to smartschool is wrong. Please check the configuration file.")
+			if(bot != null)
+				bot.sendMessage(config.messages.chatId, "Looks like your username or password to smartschool is wrong. Please check the configuration file.")
+
+			// Close browser
+			await browser.close()
+			return false
+		}
 
 		// Go to corona sign page
 		await page.goto('https://www.webtop.co.il/corona.aspx')
 
-		// Press the button to look at the qr code
-		await page.focus("#qrCodeButton")
+		// Make sure you start listening to the dialog event before clicking the link. Something like this:
+		page.on('dialog', async dialog => {
+			await dialog.accept();
+		})
+
+		// Check if you can sign right now
+		try {
+			await page.waitForSelector("#saveButton", { timeout: 5000 })
+		} catch(e) {
+			console.error("Looks like you can 't sign a Covid-19 digital health statement right now.")
+			if(bot != null)
+				bot.sendMessage(config.messages.chatId, "Looks like you can 't sign a Covid-19 digital health statement right now.")
+
+			// Close browser
+			await browser.close()
+			return false
+		}
+		await page.focus("#saveButton")
 		await page.keyboard.press('Enter')
 
 		// Give a time to load the qr code
@@ -105,6 +141,8 @@ async function sign() {
 
 		// Close browser
 		await browser.close()
+
+		return true
 	}
 }
 

@@ -21,7 +21,7 @@ module.exports = {
 
         // true - The bot will ask you every day at the time autoRemindTime if you want to sign today.
         "autoRemind": true,
-        "autoRemindTime": "18:53" // 24 hours clock. Format: HH:mm.
+        "autoRemindTime": "07:00" // 24 hours clock. Format: HH:mm.
     },
 
     // You can put this code to run automatically by cron. 
