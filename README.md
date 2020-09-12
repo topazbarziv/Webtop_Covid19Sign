@@ -23,7 +23,7 @@ Type the following command in the command line:
 ```
 crontab -e
 ```
-To run the code in background on system startup:
+To run the code in background on system startup, add these following line:
 ```
 @reboot /usr/local/bin/node /CLONE_LOCATION/Webtop_Covid19Sign/src/index.js
 ```
