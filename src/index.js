@@ -35,7 +35,8 @@ async function main() {
 					bot.sendPhoto(msg.chat.id, path.join(process.cwd(), "screenshot.png"))
 				}
 			} catch(e) {
-				bot.sendMessage(msg.chat.id, "Because an error, the signing operation was did not succeed. Check the console.")
+        bot.sendMessage(msg.chat.id, "Because an error, the signing operation was did not succeed. Check the console.")
+        console.error(e.message)
 			}
 		} else {
 			bot.sendMessage(msg.chat.id, `You have to set this ${msg.chat.id} chat id to src/config.js. \nDon't forget to reload the app after you changed the configuration file.`)
@@ -66,7 +67,10 @@ async function sign() {
 	const browser = await puppeteer.launch({
 		executablePath: revisionInfo.executablePath,
 		headless: true,
-		userDataDir: '/dev/null'
+    userDataDir: '/dev/null',
+    args: [
+      '--no-sandbox'
+    ]
 	})
 	spinner.setSpinnerTitle("Launching Chromium ... done! %s")
 	let pages = await browser.pages()
