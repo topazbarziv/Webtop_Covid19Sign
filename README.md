@@ -13,7 +13,7 @@ cp src/config.sample.js src/config.js
 Edit src/config.js file and fill all fields.
 For testing run:
 ```
-node src/index.js
+npm start
 ```
 
 ### Using reminder and quickly signing

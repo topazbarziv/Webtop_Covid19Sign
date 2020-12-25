@@ -4,7 +4,7 @@
   "description": "Automatically signing Covid-19 digital health statement at www.webtop.co.il",
   "main": "src/index.js",
   "scripts": {
-    "test": "node src/index.js"
+    "start": "node src/index.js"
   },
   "repository": {
     "type": "git",
